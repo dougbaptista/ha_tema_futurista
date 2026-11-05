@@ -48,12 +48,42 @@ No Home Assistant 2026.10 ou anterior, o caminho é o mesmo pelo **HACS**: procu
 ## Vidro de verdade (opcional)
 
 O desfoque atrás dos cartões e da barra do topo usa o **[card-mod](https://github.com/thomasloven/lovelace-card-mod)**.
-Instale pelo Marketplace e o efeito aparece sozinho. Sem o card-mod, o tema funciona igual, só sem o desfoque.
+Sem ele, o tema funciona igual, só sem o desfoque.
+
+1. Instale o **card-mod** pelo Marketplace.
+2. Para o card-mod valer no tema (e não só nos cartões de um painel), carregue-o como módulo do frontend no
+   `configuration.yaml`, embaixo de `frontend:`:
+
+   ```yaml
+   frontend:
+     themes: !include_dir_merge_named themes
+     extra_module_url:
+       - /local/community/lovelace-card-mod/card-mod.js
+   ```
+
+3. Reinicie o Home Assistant uma vez.
+
+O efeito aparece mais com uma imagem no fundo (veja abaixo). Com a grade padrão, que é quase transparente, ele é discreto.
 
 ## Mudar a cor de destaque
 
 Quer na cor do seu time? No arquivo `doug-futurista.yaml`, troque os dois valores marcados com `DESTAQUE`
-(`primary-color` e `accent-color`) e rode `frontend.reload_themes`.
+(`primary-color` e `accent-color`) e rode `frontend.reload_themes`. Botões, abas, menu, interruptores, bordas e a grade
+do fundo seguem essas duas linhas.
+
+## Outros ajustes
+
+- **Transparência dos cartões:** os números `0.78` em `card-background-color` e `ha-card-background`. Menor = mais vidro.
+- **Cantos:** `ha-card-border-radius` (`18px`). Menor = mais quadrado.
+- **Imagem no fundo:** coloque a imagem em `www/` e troque o `lovelace-background` por
+  `lovelace-background: center / cover no-repeat url("/local/fundo.jpg") fixed`.
+
+## Não perca suas mudanças
+
+Atualizar o tema pelo Marketplace substitui o arquivo `themes/doug-futurista/doug-futurista.yaml`. Para personalizar sem
+perder nada, salve uma cópia com outro nome dentro de `themes/` (por exemplo `themes/minha-casa.yaml`), troque a primeira
+linha `Doug Futurista:` por `Minha Casa:` e rode `frontend.reload_themes`. O tema "Minha Casa" aparece na lista e nenhuma
+atualização mexe nele.
 
 ## Cartões (button-card)
 
@@ -79,7 +109,7 @@ Precisa de **button-card** e **layout-card** (os dois no Marketplace); o **card-
 **Doug Futurista** is a dark navy glass theme for Home Assistant: translucent cards with a cyan border,
 matching sidebar and header, and a CSS-only circuit-grid background (no image to download).
 Install it through **Settings → Marketplace** (search for *Doug Futurista*; HACS on older versions) or copy
-`themes/doug-futurista.yaml` into your `themes/` folder. Optional: install **card-mod** for the frosted-glass blur.
+`themes/doug-futurista.yaml` into your `themes/` folder. Optional: install **card-mod** for the frosted-glass blur and load it with `frontend: extra_module_url: - /local/community/lovelace-card-mod/card-mod.js` (restart once).
 Change the accent color by editing the two `DESTAQUE` values.
 
 ## Licença
