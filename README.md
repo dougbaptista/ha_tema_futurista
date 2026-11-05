@@ -15,10 +15,10 @@ Feito pelo canal **[Doug Smart Home](https://www.youtube.com/@dougsmarthome)**.
 ### Pelo Marketplace (recomendado)
 
 1. No Home Assistant, abra **Configurações → Marketplace**.
-2. Toque nos três pontinhos → **Repositórios personalizados** e adicione
-   `https://github.com/dougbaptista/ha_tema_futurista` com o tipo **Tema**.
-3. Procure **Doug Futurista** e instale.
-4. Rode a ação `frontend.reload_themes` (ou reinicie o Home Assistant).
+2. Procure **Doug Futurista** e instale.
+3. Rode a ação `frontend.reload_themes` (ou reinicie o Home Assistant).
+
+No Home Assistant 2026.10 ou anterior, o caminho é o mesmo pelo **HACS**: procure **Doug Futurista** e baixe.
 
 ### Manual
 
@@ -78,7 +78,7 @@ Precisa de **button-card** e **layout-card** (os dois no Marketplace); o **card-
 
 **Doug Futurista** is a dark navy glass theme for Home Assistant: translucent cards with a cyan border,
 matching sidebar and header, and a CSS-only circuit-grid background (no image to download).
-Install it through **Settings → Marketplace** (custom repository, type *Theme*) or copy
+Install it through **Settings → Marketplace** (search for *Doug Futurista*; HACS on older versions) or copy
 `themes/doug-futurista.yaml` into your `themes/` folder. Optional: install **card-mod** for the frosted-glass blur.
 Change the accent color by editing the two `DESTAQUE` values.
 
