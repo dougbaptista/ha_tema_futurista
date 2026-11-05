@@ -5,7 +5,7 @@
 #
 # Como usar:
 #   - Painel em modo YAML:   button_card_templates: !include doug-futurista-cards.yaml   (no topo do painel)
-#   - Painel pela interface: editar painel > ⋮ > Editor de configuração bruta, e colar este conteúdo
+#   - Painel pela interface: editar painel > ⋮ > Editor de configuração RAW, e colar este conteúdo
 #                            embaixo de uma linha "button_card_templates:" (com 2 espaços de recuo).
 #
 # Modelos e variáveis:
@@ -90,7 +90,7 @@ fx_pessoa:
       [[[
         if (!entity) return `<div style="color:#ff9a9a">entidade não encontrada: ${this._config && this._config.entity}</div>`;
         const nome = entity.attributes.friendly_name || '';
-        const e = entity.state === 'home' ? 'Em casa' : entity.state === 'not_home' ? 'Fora' : entity.state;
+        const e = entity.state === 'home' ? 'Em casa' : entity.state === 'not_home' ? 'Fora' : ['unknown', 'unavailable'].includes(entity.state) ? 'Sem localização' : entity.state;
         const cor = entity.state === 'home' ? '#34e08a' : '#9fb0cc';
         const b = states[variables.bateria] ? parseFloat(states[variables.bateria].state) : NaN;
         const passos = states[variables.passos] ? parseFloat(states[variables.passos].state) : NaN;
@@ -186,6 +186,7 @@ fx_aspirador:
     topo: |
       [[[
         const m = {docked: ['Na base', '#9fd8ff'], cleaning: ['Limpando', '#34e08a'], returning: ['Voltando à base', '#ffc83c'], paused: ['Pausado', '#ffc83c'], idle: ['Parado', '#9fb0cc'], error: ['Erro', '#ff5a6e'], unavailable: ['Indisponível', '#ff5a6e']};
+        if (!entity) return `<div style="display:flex;align-items:center;gap:8px;color:#ff9a9a;font-size:13px;text-align:left"><ha-icon icon="mdi:help-circle-outline" style="--mdc-icon-size:22px;margin:0"></ha-icon><span>entidade não encontrada<br><b>${(this._config && this._config.entity) || '(sem entity)'}</b></span></div>`;
         const [t, c] = m[entity.state] || [entity.state, '#9fb0cc'];
         return `<div style="display:flex;align-items:center;gap:12px"><ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:30px;color:${c}"></ha-icon>
           <div style="text-align:left"><div style="font-size:18px;font-weight:700">Aspirador</div><div style="font-size:14px;font-weight:600;color:${c}">${t}</div></div></div>`;
@@ -208,7 +209,7 @@ fx_aspirador:
           - type: custom:button-card
             icon: mdi:play
             show_name: false
-            tap_action: {action: call-service, service: vacuum.start, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            tap_action: {action: call-service, service: vacuum.start, target: {entity_id: '[[[ return entity ? entity.entity_id : '''' ]]]'}}
             styles: &fx_btn
               card:
                 - height: 38px
@@ -223,12 +224,12 @@ fx_aspirador:
           - type: custom:button-card
             icon: mdi:pause
             show_name: false
-            tap_action: {action: call-service, service: vacuum.pause, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            tap_action: {action: call-service, service: vacuum.pause, target: {entity_id: '[[[ return entity ? entity.entity_id : '''' ]]]'}}
             styles: *fx_btn
           - type: custom:button-card
             icon: mdi:home-import-outline
             show_name: false
-            tap_action: {action: call-service, service: vacuum.return_to_base, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            tap_action: {action: call-service, service: vacuum.return_to_base, target: {entity_id: '[[[ return entity ? entity.entity_id : '''' ]]]'}}
             styles: *fx_btn
 
 fx_ambiente:

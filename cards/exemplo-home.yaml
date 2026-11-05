@@ -3,7 +3,7 @@
 #
 # Precisa de: button-card, layout-card e card-mod (todos no Marketplace) + os modelos de doug-futurista-cards.yaml.
 # Troque TODOS os entity_id de exemplo (person.voce, light.sala_teto, ...) pelos da sua casa.
-# Cole como uma view: painel > editar > ⋮ > Editor de configuração bruta, dentro de "views:".
+# Cole como uma view: painel > editar > ⋮ > Editor de configuração RAW, dentro de "views:".
 #
 # Layout: grade com áreas nomeadas. 4 colunas no computador, 2 no tablet (até 1100 px), 1 no celular (até 620 px).
 # No layout-card vale a PRIMEIRA mediaquery que casar: por isso a de tela pequena vem antes.

@@ -66,7 +66,7 @@ Além do tema, o repositório traz os **cartões do vídeo** em [`cards/`](cards
 
 Precisa de **button-card** e **layout-card** (os dois no Marketplace); o **card-mod** é opcional.
 
-1. Painel → editar → ⋮ → **Editor de configuração bruta**.
+1. Painel → editar → ⋮ → **Editor de configuração RAW**.
 2. No topo, cole `button_card_templates:` e, embaixo (com 2 espaços), o conteúdo de `doug-futurista-cards.yaml`.
 3. Dentro de `views:`, cole a view de `exemplo-home.yaml`.
 4. Troque os `entity_id` de exemplo (`person.voce`, `light.sala_teto`, ...) pelos da sua casa.
