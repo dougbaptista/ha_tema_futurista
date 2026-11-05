@@ -55,6 +55,23 @@ Instale pelo Marketplace e o efeito aparece sozinho. Sem o card-mod, o tema func
 Quer na cor do seu time? No arquivo `doug-futurista.yaml`, troque os dois valores marcados com `DESTAQUE`
 (`primary-color` e `accent-color`) e rode `frontend.reload_themes`.
 
+## Cartões (button-card)
+
+Além do tema, o repositório traz os **cartões do vídeo** em [`cards/`](cards):
+
+| arquivo | o que é |
+|---|---|
+| [`doug-futurista-cards.yaml`](cards/doug-futurista-cards.yaml) | 9 modelos do button-card: `fx_pill`, `fx_pessoa`, `fx_cotacao`, `fx_aspirador`, `fx_ambiente`, `fx_luz`, `fx_sensor`, `fx_acesso`, `fx_pilula` (as variáveis de cada um estão no topo do arquivo) |
+| [`exemplo-home.yaml`](cards/exemplo-home.yaml) | uma Home completa usando os modelos: faixa com hora, pílulas, pessoas, aspirador, cotações, luzes, segurança e ambientes, em grade que se adapta ao celular |
+
+Precisa de **button-card** e **layout-card** (os dois no Marketplace); o **card-mod** é opcional.
+
+1. Painel → editar → ⋮ → **Editor de configuração bruta**.
+2. No topo, cole `button_card_templates:` e, embaixo (com 2 espaços), o conteúdo de `doug-futurista-cards.yaml`.
+3. Dentro de `views:`, cole a view de `exemplo-home.yaml`.
+4. Troque os `entity_id` de exemplo (`person.voce`, `light.sala_teto`, ...) pelos da sua casa.
+   Entidade que não existir aparece como "entidade não encontrada", em vez de quebrar o cartão.
+
 ---
 
 ## English

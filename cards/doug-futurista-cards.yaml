@@ -1,0 +1,449 @@
+# Doug Futurista · cartões (modelos do custom:button-card)
+# https://github.com/dougbaptista/ha_tema_futurista
+#
+# Precisa do button-card (Marketplace). O tema Doug Futurista é opcional, mas é com ele que fica igual ao vídeo.
+#
+# Como usar:
+#   - Painel em modo YAML:   button_card_templates: !include doug-futurista-cards.yaml   (no topo do painel)
+#   - Painel pela interface: editar painel > ⋮ > Editor de configuração bruta, e colar este conteúdo
+#                            embaixo de uma linha "button_card_templates:" (com 2 espaços de recuo).
+#
+# Modelos e variáveis:
+#   fx_pill      pílula do topo (ícone + texto). Use name/icon normais do button-card.
+#   fx_pessoa    pessoa (entity: person.x). variables: foto (url), bateria (sensor %), passos (sensor)
+#   fx_cotacao   valor em R$ com variação. variables: titulo, icone, cor, anterior (sensor do valor anterior), decimais
+#   fx_aspirador aspirador (entity: vacuum.x) com play/pausa/base. variables: bateria, area, tempo (sensores)
+#   fx_ambiente  linha de cômodo com contador de luzes. variables: nome, icone, luzes (lista de entity_id)
+#   fx_luz       botão de luz ou plugue: toque liga/desliga, segurar abre detalhes. variables: nome, icone (opcionais)
+#   fx_sensor    porta/janela/movimento/pessoa/campainha com "há quanto tempo". variables: tipo, nome
+#   fx_acesso    botão grande (portão, porta, sirene, visitas). variables: tipo (portao|porta|sirene|visitas), titulo
+#   fx_pilula    pílula pequena de um switch, laranja quando ligado. variables: rotulo
+
+fx_pill:
+  show_icon: true
+  show_name: true
+  show_state: false
+  tap_action:
+    action: none
+  styles:
+    card:
+      - height: 54px
+      - border-radius: 999px
+      - padding: 0 18px
+      - background: linear-gradient(145deg, rgba(14,34,66,0.78), rgba(8,18,40,0.78))
+      - border: 1px solid rgba(60,200,255,0.25)
+      - box-shadow: 0 6px 22px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)
+      - backdrop-filter: blur(12px)
+      - -webkit-backdrop-filter: blur(12px)
+    grid:
+      - grid-template-areas: '"i n"'
+      - grid-template-columns: 26px 1fr
+      - column-gap: 10px
+      - align-items: center
+    icon:
+      - width: 24px
+    name:
+      - font-size: 15px
+      - font-weight: 600
+      - justify-self: start
+      - color: '#eaf4ff'
+      - white-space: nowrap
+
+fx_pessoa:
+  show_icon: false
+  show_name: false
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - padding: 10px 16px
+      - min-height: 96px
+      - box-sizing: border-box
+      - border-radius: 20px
+      - background: linear-gradient(145deg, rgba(14,34,66,0.78), rgba(8,18,40,0.78))
+      - border: 1px solid rgba(60,200,255,0.25)
+      - box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)
+      - backdrop-filter: blur(14px)
+      - -webkit-backdrop-filter: blur(14px)
+      - color: '#eaf4ff'
+    grid:
+      - grid-template-areas: '"foto info"'
+      - grid-template-columns: 76px 1fr
+      - column-gap: 14px
+      - align-items: center
+    custom_fields:
+      foto:
+        - justify-self: start
+      info:
+        - justify-self: start
+        - text-align: left
+  custom_fields:
+    foto: |
+      [[[
+        if (!entity) return '';
+        const em = entity.state === 'home';
+        const cor = em ? '#34e08a' : '#7a8aa6';
+        return `<div style="width:70px;height:70px;border-radius:50%;padding:3px;background:conic-gradient(${cor},${cor}55,${cor});box-shadow:0 0 18px ${cor}66">
+          <img src="${variables.foto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;background:#0b1830;display:block"></div>`;
+      ]]]
+    info: |
+      [[[
+        if (!entity) return `<div style="color:#ff9a9a">entidade não encontrada: ${this._config && this._config.entity}</div>`;
+        const nome = entity.attributes.friendly_name || '';
+        const e = entity.state === 'home' ? 'Em casa' : entity.state === 'not_home' ? 'Fora' : entity.state;
+        const cor = entity.state === 'home' ? '#34e08a' : '#9fb0cc';
+        const b = states[variables.bateria] ? parseFloat(states[variables.bateria].state) : NaN;
+        const passos = states[variables.passos] ? parseFloat(states[variables.passos].state) : NaN;
+        const nivel = isNaN(b) ? 'mdi:battery-unknown' : (b >= 95 ? 'mdi:battery' : `mdi:battery-${Math.max(10, Math.round(b / 10) * 10)}`);
+        const corB = isNaN(b) ? '#9fb0cc' : (b <= 20 ? '#ff5a6e' : b <= 40 ? '#ffc83c' : '#cfe3ff');
+        const fmt = (n) => Math.round(n).toLocaleString('pt-BR');
+        return `<div style="font-size:19px;font-weight:700;line-height:1.15">${nome}</div>
+          <div style="font-size:15px;font-weight:600;color:${cor};margin:1px 0 5px">${e}</div>
+          <div style="display:flex;gap:16px;font-size:14px;color:#cfe3ff;align-items:center">
+            <span style="display:flex;align-items:center;gap:4px;color:${corB}"><ha-icon icon="${nivel}" style="--mdc-icon-size:18px"></ha-icon>${isNaN(b) ? '--' : Math.round(b) + '%'}</span>
+            <span style="display:flex;align-items:center;gap:4px"><ha-icon icon="mdi:shoe-print" style="--mdc-icon-size:18px"></ha-icon>${isNaN(passos) ? '--' : fmt(passos)} passos</span>
+          </div>`;
+      ]]]
+
+fx_cotacao:
+  show_icon: false
+  show_name: false
+  show_state: false
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - padding: 9px 14px
+      - border-radius: 18px
+      - background: linear-gradient(145deg, rgba(14,34,66,0.78), rgba(8,18,40,0.78))
+      - border: 1px solid rgba(60,200,255,0.25)
+      - box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)
+      - backdrop-filter: blur(14px)
+      - -webkit-backdrop-filter: blur(14px)
+      - color: '#eaf4ff'
+    grid:
+      - grid-template-areas: '"ic info"'
+      - grid-template-columns: 46px 1fr
+      - column-gap: 12px
+      - align-items: center
+    custom_fields:
+      ic:
+        - justify-self: start
+      info:
+        - justify-self: start
+        - text-align: left
+  custom_fields:
+    ic: |
+      [[[ return `<div style="width:40px;height:40px;border-radius:50%;background:${variables.cor}22;border:2px solid ${variables.cor};display:flex;align-items:center;justify-content:center"><ha-icon icon="${variables.icone}" style="color:${variables.cor};--mdc-icon-size:23px"></ha-icon></div>`; ]]]
+    info: |
+      [[[
+        const v = entity ? parseFloat(entity.state) : NaN;
+        if (isNaN(v)) return `<div style="font-size:15px;opacity:.8">${variables.titulo}</div><div style="font-size:20px">indisponível</div>`;
+        const a = variables.anterior && states[variables.anterior] ? parseFloat(states[variables.anterior].state) : NaN;
+        const fmt = (n, d) => n.toLocaleString('pt-BR', {minimumFractionDigits: d, maximumFractionDigits: d});
+        let delta = '';
+        if (!isNaN(a) && a > 0) {
+          const p = (v - a) / a * 100;
+          const c = p >= 0 ? '#34e08a' : '#ff5a6e';
+          delta = `<span style="font-size:13px;font-weight:700;color:${c};background:${c}22;padding:2px 8px;border-radius:999px;margin-left:8px;white-space:nowrap">${p >= 0 ? '▲' : '▼'} ${fmt(Math.abs(p), 2)}%</span>`;
+        }
+        const d = variables.decimais === undefined ? 2 : variables.decimais;
+        return `<div style="font-size:15px;opacity:.8">${variables.titulo}</div><div style="font-size:20px;font-weight:700;white-space:nowrap">R$ ${fmt(v, d)}${delta}</div>`;
+      ]]]
+
+fx_aspirador:
+  show_icon: false
+  show_name: false
+  show_state: false
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - padding: 10px 16px
+      - min-height: 96px
+      - box-sizing: border-box
+      - border-radius: 20px
+      - background: linear-gradient(145deg, rgba(14,34,66,0.78), rgba(8,18,40,0.78))
+      - border: 1px solid rgba(60,200,255,0.25)
+      - box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)
+      - backdrop-filter: blur(14px)
+      - -webkit-backdrop-filter: blur(14px)
+      - color: '#eaf4ff'
+    grid:
+      - grid-template-areas: '"topo botoes" "infos botoes"'
+      - grid-template-columns: 1fr auto
+      - row-gap: 4px
+      - column-gap: 12px
+      - align-items: center
+    custom_fields:
+      topo:
+        - justify-self: start
+      infos:
+        - justify-self: start
+      botoes:
+        - justify-self: end
+  custom_fields:
+    topo: |
+      [[[
+        const m = {docked: ['Na base', '#9fd8ff'], cleaning: ['Limpando', '#34e08a'], returning: ['Voltando à base', '#ffc83c'], paused: ['Pausado', '#ffc83c'], idle: ['Parado', '#9fb0cc'], error: ['Erro', '#ff5a6e'], unavailable: ['Indisponível', '#ff5a6e']};
+        const [t, c] = m[entity.state] || [entity.state, '#9fb0cc'];
+        return `<div style="display:flex;align-items:center;gap:12px"><ha-icon icon="mdi:robot-vacuum" style="--mdc-icon-size:30px;color:${c}"></ha-icon>
+          <div style="text-align:left"><div style="font-size:18px;font-weight:700">Aspirador</div><div style="font-size:14px;font-weight:600;color:${c}">${t}</div></div></div>`;
+      ]]]
+    infos: |
+      [[[
+        const b = states[variables.bateria];
+        const a = states[variables.area];
+        const t = states[variables.tempo];
+        const item = (ic, txt) => `<span style="display:flex;align-items:center;gap:4px"><ha-icon icon="${ic}" style="--mdc-icon-size:18px"></ha-icon>${txt}</span>`;
+        return `<div style="display:flex;gap:10px;font-size:13px;color:#cfe3ff;flex-wrap:nowrap;white-space:nowrap">
+          ${item('mdi:battery', b ? Math.round(parseFloat(b.state)) + '%' : '--')}
+          ${item('mdi:texture-box', a ? a.state + ' m²' : '--')}
+          ${item('mdi:timer-outline', t ? parseInt(t.state) + ' min' : '--')}</div>`;
+      ]]]
+    botoes:
+      card:
+        type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            icon: mdi:play
+            show_name: false
+            tap_action: {action: call-service, service: vacuum.start, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            styles: &fx_btn
+              card:
+                - height: 38px
+                - width: 40px
+                - border-radius: 12px
+                - background: rgba(60,200,255,0.14)
+                - border: 1px solid rgba(60,200,255,0.3)
+                - box-shadow: none
+              icon:
+                - color: '#9fe3ff'
+                - width: 24px
+          - type: custom:button-card
+            icon: mdi:pause
+            show_name: false
+            tap_action: {action: call-service, service: vacuum.pause, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            styles: *fx_btn
+          - type: custom:button-card
+            icon: mdi:home-import-outline
+            show_name: false
+            tap_action: {action: call-service, service: vacuum.return_to_base, target: {entity_id: '[[[ return entity.entity_id ]]]'}}
+            styles: *fx_btn
+
+fx_ambiente:
+  show_icon: false
+  show_name: false
+  show_state: false
+  tap_action:
+    action: none
+  styles:
+    card:
+      - background: transparent
+      - border: none
+      - border-radius: 0
+      - box-shadow: none
+      - padding: 5px 4px
+      - border-bottom: 1px solid rgba(160,200,255,0.12)
+    grid:
+      - grid-template-areas: '"i n b"'
+      - grid-template-columns: 34px 1fr auto
+      - column-gap: 12px
+      - align-items: center
+    custom_fields:
+      i:
+        - justify-self: start
+      n:
+        - justify-self: start
+      b:
+        - justify-self: end
+  custom_fields:
+    i: |
+      [[[ return `<ha-icon icon="${variables.icone}" style="--mdc-icon-size:22px;color:#6fb8ff"></ha-icon>`; ]]]
+    n: |
+      [[[ return `<div style="font-size:15px;font-weight:600;color:#eaf4ff">${variables.nome}</div>`; ]]]
+    b: |
+      [[[
+        const l = variables.luzes || [];
+        if (!l.length) return '';
+        const on = l.filter((e) => states[e] && states[e].state === 'on').length;
+        const cor = on ? '#ffd23f' : '#7a8aa6';
+        const bg = on ? 'rgba(255,210,63,0.18)' : 'rgba(122,138,166,0.15)';
+        return `<div style="display:flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;background:${bg};color:${cor};font-weight:700;font-size:13px"><ha-icon icon="${on ? 'mdi:lightbulb-on' : 'mdi:lightbulb-outline'}" style="--mdc-icon-size:20px"></ha-icon>${on ? on + '/' + l.length : l.length}</div>`;
+      ]]]
+
+# Botão de uma luz (ou plugue): toque liga/desliga, segurar abre os detalhes. Acesa = dourada com brilho.
+fx_luz:
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: true
+  tap_action:
+    action: toggle
+  hold_action:
+    action: more-info
+  styles:
+    card:
+      - padding: 8px 10px
+      - min-height: 54px
+      - box-sizing: border-box
+      - display: flex
+      - flex-direction: column
+      - justify-content: center
+      - border-radius: 14px
+      - color: '#eaf4ff'
+      - background: |
+          [[[ return entity && entity.state === 'on' ? 'linear-gradient(145deg, rgba(255,200,60,0.26), rgba(255,150,30,0.10))' : 'rgba(255,255,255,0.045)'; ]]]
+      - border: |
+          [[[ return entity && entity.state === 'on' ? '1px solid rgba(255,200,60,0.55)' : '1px solid rgba(160,200,255,0.16)'; ]]]
+      - box-shadow: |
+          [[[ return entity && entity.state === 'on' ? '0 0 18px rgba(255,190,60,0.25)' : 'none'; ]]]
+  label: |
+    [[[
+      if (!entity) return `<div style="display:flex;align-items:center;gap:8px;color:#ff9a9a;font-size:13px;text-align:left"><ha-icon icon="mdi:help-circle-outline" style="--mdc-icon-size:22px;margin:0"></ha-icon><span>entidade não encontrada<br><b>${(this._config && this._config.entity) || '(sem entity)'}</b></span></div>`;
+      const on = entity.state === 'on';
+      const indis = ['unavailable', 'unknown'].includes(entity.state);
+      const dom = entity.entity_id.split('.')[0];
+      let nome = variables.nome || entity.attributes.friendly_name || entity.entity_id;
+      nome = nome.replace(/^Luz /i, '');
+      const br = entity.attributes.brightness;
+      const sub = indis ? 'indisponível' : on ? (br ? Math.round(br / 2.55) + '%' : 'ligada') : 'apagada';
+      const ic = variables.icone || (dom === 'switch' ? 'mdi:power-plug' : (on ? 'mdi:lightbulb-on' : 'mdi:lightbulb-outline'));
+      const cor = indis ? '#ff7a7a' : on ? '#ffd23f' : '#7f93b3';
+      const brilho = on ? 'filter:drop-shadow(0 0 8px rgba(255,210,63,0.6));' : '';
+      return `<div style="display:flex;align-items:center;gap:10px;text-align:left">
+        <ha-icon icon="${ic}" style="--mdc-icon-size:26px;color:${cor};margin:0;flex:none;${brilho}"></ha-icon>
+        <div style="min-width:0"><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nome}</div>
+        <div style="font-size:12px;opacity:.85;color:${on ? '#ffd23f' : '#9fb0cc'}">${sub}</div></div></div>`;
+    ]]]
+
+# Botão de sensor (porta, janela, movimento, pessoa na câmera): cor e texto conforme o estado e há quanto tempo mudou.
+fx_sensor:
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: true
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - padding: 8px 10px
+      - min-height: 54px
+      - box-sizing: border-box
+      - display: flex
+      - flex-direction: column
+      - justify-content: center
+      - border-radius: 14px
+      - color: '#eaf4ff'
+      - background: |
+          [[[
+            const on = !!entity && ['on', 'open', 'opening'].includes(entity.state);
+            const cor = variables.tipo === 'pessoa' ? '255,90,110' : variables.tipo === 'movimento' ? '60,200,255' : '255,200,60';
+            return on ? `linear-gradient(145deg, rgba(${cor},0.26), rgba(${cor},0.08))` : 'rgba(255,255,255,0.045)';
+          ]]]
+      - border: |
+          [[[
+            const on = !!entity && ['on', 'open', 'opening'].includes(entity.state);
+            const cor = variables.tipo === 'pessoa' ? '255,90,110' : variables.tipo === 'movimento' ? '60,200,255' : '255,200,60';
+            return on ? `1px solid rgba(${cor},0.6)` : '1px solid rgba(160,200,255,0.16)';
+          ]]]
+  label: |
+    [[[
+      if (!entity) return `<div style="display:flex;align-items:center;gap:8px;color:#ff9a9a;font-size:13px;text-align:left"><ha-icon icon="mdi:help-circle-outline" style="--mdc-icon-size:22px;margin:0"></ha-icon><span>entidade não encontrada<br><b>${(this._config && this._config.entity) || '(sem entity)'}</b></span></div>`;
+      const on = ['on', 'open', 'opening'].includes(entity.state);
+      const indis = ['unavailable', 'unknown'].includes(entity.state);
+      const tipo = variables.tipo || 'porta';
+      const rel = (iso) => { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 1 ? 'agora' : m < 60 ? `há ${m} min` : m < 1440 ? `há ${Math.round(m / 60)} h` : `há ${Math.round(m / 1440)} d`; };
+      const ic = {porta: on ? 'mdi:door-open' : 'mdi:door-closed', janela: on ? 'mdi:window-open-variant' : 'mdi:window-closed-variant', movimento: on ? 'mdi:motion-sensor' : 'mdi:motion-sensor-off', pessoa: on ? 'mdi:account-alert' : 'mdi:account-outline', campainha: on ? 'mdi:bell-ring' : 'mdi:bell-outline'}[tipo] || 'mdi:circle';
+      const txt = {porta: on ? 'aberta' : 'fechada', janela: on ? 'aberta' : 'fechada', movimento: on ? 'movimento' : 'parado', pessoa: on ? 'pessoa!' : 'nada', campainha: on ? 'tocando' : 'quieta'}[tipo] || entity.state;
+      const cor = indis ? '#ff7a7a' : on ? (tipo === 'pessoa' ? '#ff5a6e' : tipo === 'movimento' ? '#3cc8ff' : '#ffc83c') : '#7f93b3';
+      const nome = variables.nome || (entity.attributes.friendly_name || '').replace(/ (Contact|Contato)$/i, '');
+      const sub = indis ? 'indisponível' : `${txt} · ${rel(entity.last_changed)}`;
+      return `<div style="display:flex;align-items:center;gap:10px;text-align:left">
+        <ha-icon icon="${ic}" style="--mdc-icon-size:26px;color:${cor};margin:0;flex:none;${on ? 'filter:drop-shadow(0 0 7px ' + cor + '99)' : ''}"></ha-icon>
+        <div style="min-width:0"><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nome}</div>
+        <div style="font-size:12px;opacity:.85;color:${on ? cor : '#9fb0cc'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sub}</div></div></div>`;
+    ]]]
+
+# Botão grande de acesso (portão, porta externa, sirene, visitas): mostra o estado e aciona ao tocar (cada um define a ação).
+fx_acesso:
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: true
+  styles:
+    card:
+      - padding: 12px 12px
+      - min-height: 84px
+      - box-sizing: border-box
+      - display: flex
+      - flex-direction: column
+      - justify-content: center
+      - border-radius: 18px
+      - color: '#eaf4ff'
+      - background: |
+          [[[ return entity && ['on', 'open', 'opening'].includes(entity.state) ? 'linear-gradient(145deg, rgba(255,200,60,0.22), rgba(255,150,30,0.08))' : 'rgba(255,255,255,0.05)'; ]]]
+      - border: |
+          [[[ return entity && ['on', 'open', 'opening'].includes(entity.state) ? '1px solid rgba(255,200,60,0.5)' : '1px solid rgba(60,200,255,0.25)'; ]]]
+  label: |
+    [[[
+      if (!entity) return `<div style="display:flex;align-items:center;gap:8px;color:#ff9a9a;font-size:13px;text-align:left"><ha-icon icon="mdi:help-circle-outline" style="--mdc-icon-size:22px;margin:0"></ha-icon><span>entidade não encontrada<br><b>${(this._config && this._config.entity) || '(sem entity)'}</b></span></div>`;
+      const s = entity.state;
+      const aberto = ['on', 'open', 'opening'].includes(s);
+      const rel = (iso) => { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 1 ? 'agora' : m < 60 ? `há ${m} min` : m < 1440 ? `há ${Math.round(m / 60)} h` : `há ${Math.round(m / 1440)} d`; };
+      const tipo = variables.tipo;
+      let ic, txt, cor;
+      if (tipo === 'portao') { ic = aberto ? 'mdi:gate-open' : 'mdi:gate'; txt = aberto ? 'aberto ' + rel(entity.last_changed) : 'fechado'; cor = aberto ? '#ffc83c' : '#9fd8ff'; }
+      else if (tipo === 'porta') { ic = aberto ? 'mdi:door-open' : 'mdi:door'; txt = aberto ? 'aberta ' + rel(entity.last_changed) : 'fechada'; cor = aberto ? '#ffc83c' : '#9fd8ff'; }
+      else if (tipo === 'sirene') { ic = aberto ? 'mdi:bullhorn' : 'mdi:bullhorn-outline'; txt = aberto ? 'TOCANDO' : 'desligada'; cor = aberto ? '#ff5a6e' : '#9fd8ff'; }
+      else { ic = aberto ? 'mdi:account-multiple-check' : 'mdi:account-multiple-outline'; txt = aberto ? 'modo visitas ligado' : 'modo visitas desligado'; cor = aberto ? '#34e08a' : '#9fd8ff'; }
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+        <ha-icon icon="${ic}" style="--mdc-icon-size:32px;color:${cor};margin:0;${aberto ? 'filter:drop-shadow(0 0 9px ' + cor + '99)' : ''}"></ha-icon>
+        <div style="font-size:15px;font-weight:700">${variables.titulo}</div>
+        <div style="font-size:12px;opacity:.85;color:${cor}">${txt}</div></div>`;
+    ]]]
+
+# Pílula pequena de um switch (ex.: apoio elétrico e circulação do boiler).
+# Toque abre os detalhes; segurar liga/desliga. Laranja quando ligado.
+fx_pilula:
+  show_icon: true
+  show_name: true
+  show_state: false
+  tap_action:
+    action: more-info
+  hold_action:
+    action: toggle
+  name: |
+    [[[ return `${variables.rotulo} · ${entity && entity.state === 'on' ? 'ligado' : entity && entity.state === 'off' ? 'desligado' : 'indisponível'}`; ]]]
+  styles:
+    card:
+      - padding: 3px 10px 3px 7px
+      - border-radius: 999px
+      - background: rgba(255,255,255,0.05)
+      - border: 1px solid rgba(160,200,255,0.18)
+      - box-shadow: none
+      - backdrop-filter: none
+      - width: auto
+    grid:
+      - grid-template-areas: '"i n"'
+      - grid-template-columns: 16px auto
+      - column-gap: 6px
+    icon:
+      - width: 15px
+      - color: '#7f93b3'
+    name:
+      - font-size: 11.5px
+      - font-weight: 500
+      - color: '#9fb0cc'
+      - white-space: nowrap
+  state:
+    - value: 'on'
+      styles:
+        card:
+          - background: rgba(255,150,60,0.13)
+          - border: 1px solid rgba(255,150,60,0.55)
+        icon:
+          - color: '#ff963c'
+          - filter: drop-shadow(0 0 5px rgba(255,150,60,0.7))
+        name:
+          - color: '#ffc08a'

@@ -1,0 +1,185 @@
+# Doug Futurista · exemplo de Home com os cartões fx_*
+# https://github.com/dougbaptista/ha_tema_futurista
+#
+# Precisa de: button-card, layout-card e card-mod (todos no Marketplace) + os modelos de doug-futurista-cards.yaml.
+# Troque TODOS os entity_id de exemplo (person.voce, light.sala_teto, ...) pelos da sua casa.
+# Cole como uma view: painel > editar > ⋮ > Editor de configuração bruta, dentro de "views:".
+#
+# Layout: grade com áreas nomeadas. 4 colunas no computador, 2 no tablet (até 1100 px), 1 no celular (até 620 px).
+# No layout-card vale a PRIMEIRA mediaquery que casar: por isso a de tela pequena vem antes.
+
+- title: Home
+  path: home-futurista
+  icon: mdi:home-lightning-bolt
+  type: custom:grid-layout
+  layout:
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+    grid-template-areas: |
+      "hero hero hero hero"
+      "pills pills pills pills"
+      "p1 p2 asp amb"
+      "cot cot luz amb"
+      "seg seg luz amb"
+    align-items: start
+    grid-gap: 0 4px
+    padding: 8px 12px 40px
+    mediaquery:
+      "(max-width: 620px)":
+        grid-template-columns: minmax(0, 1fr)
+        grid-template-areas: |
+          "hero"
+          "pills"
+          "p1"
+          "p2"
+          "asp"
+          "cot"
+          "luz"
+          "seg"
+          "amb"
+      "(max-width: 1100px)":
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+        grid-template-areas: |
+          "hero hero"
+          "pills pills"
+          "p1 p2"
+          "asp cot"
+          "luz luz"
+          "seg seg"
+          "amb amb"
+  cards:
+    # ---- faixa do topo: nome da casa, data e hora ----
+    - type: custom:button-card
+      view_layout: {grid-area: hero}
+      entity: sensor.date
+      show_icon: false
+      show_name: false
+      show_state: false
+      styles:
+        card:
+          - padding: 18px 24px
+          - border-radius: 22px
+          - background: linear-gradient(145deg, rgba(14,34,66,0.78), rgba(8,18,40,0.78))
+          - border: 1px solid rgba(60,200,255,0.25)
+          - color: '#eaf4ff'
+        grid:
+          - grid-template-areas: '"casa hora"'
+          - grid-template-columns: 1fr auto
+        custom_fields:
+          casa: [justify-self: start]
+          hora: [justify-self: end]
+      custom_fields:
+        casa: |
+          [[[ return `<div style="font-size:26px;font-weight:800">Minha casa</div><div style="font-size:14px;color:#9fb0cc">tudo em um lugar</div>`; ]]]
+        hora: |
+          [[[
+            const d = new Date();
+            const dia = d.toLocaleDateString('pt-BR', {weekday: 'short', day: 'numeric', month: 'short'});
+            const h = d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            return `<div style="text-align:right"><div style="font-size:14px;color:#9fb0cc">${dia}</div><div style="font-size:34px;font-weight:800">${h}</div></div>`;
+          ]]]
+
+    # ---- pílulas: resumo da casa (troque pelos seus sensores de contagem) ----
+    - type: grid
+      view_layout: {grid-area: pills}
+      columns: 4
+      square: false
+      cards:
+        - type: custom:button-card
+          template: fx_pill
+          entity: alarm_control_panel.alarme
+          name: '[[[ return !entity ? "Alarme?" : entity.state === "disarmed" ? "Desarmado" : "Armado"; ]]]'
+          icon: mdi:shield-home
+          tap_action: {action: more-info}
+        - type: custom:button-card
+          template: fx_pill
+          name: '[[[ const n = ["light.sala_teto","light.cozinha"].filter(e => states[e] && states[e].state === "on").length; return n + (n === 1 ? " luz" : " luzes"); ]]]'
+          icon: mdi:lightbulb-group
+        - type: custom:button-card
+          template: fx_pill
+          entity: binary_sensor.porta_entrada
+          name: '[[[ return !entity ? "Porta?" : entity.state === "on" ? "Porta aberta" : "Porta fechada"; ]]]'
+          icon: mdi:door
+          tap_action: {action: more-info}
+        - type: custom:button-card
+          template: fx_pill
+          entity: weather.casa
+          name: '[[[ return entity ? Math.round(entity.attributes.temperature) + " °C" : "Clima?"; ]]]'
+          icon: mdi:weather-partly-cloudy
+          tap_action: {action: more-info}
+
+    # ---- pessoas ----
+    - type: custom:button-card
+      view_layout: {grid-area: p1}
+      template: fx_pessoa
+      entity: person.voce
+      variables:
+        foto: /local/fotos/voce.jpg
+        bateria: sensor.celular_voce_bateria
+        passos: sensor.celular_voce_passos
+    - type: custom:button-card
+      view_layout: {grid-area: p2}
+      template: fx_pessoa
+      entity: person.outra_pessoa
+      variables:
+        foto: /local/fotos/outra.jpg
+        bateria: sensor.celular_outra_bateria
+        passos: sensor.celular_outra_passos
+
+    # ---- aspirador ----
+    - type: custom:button-card
+      view_layout: {grid-area: asp}
+      template: fx_aspirador
+      entity: vacuum.aspirador
+      variables:
+        bateria: sensor.aspirador_bateria
+        area: sensor.aspirador_area_limpa
+        tempo: sensor.aspirador_tempo_limpeza
+
+    # ---- cotações ----
+    - type: grid
+      view_layout: {grid-area: cot}
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: fx_cotacao
+          entity: sensor.dolar
+          variables: {titulo: Dólar, icone: mdi:currency-usd, cor: '#34e08a'}
+        - type: custom:button-card
+          template: fx_cotacao
+          entity: sensor.gasolina
+          variables: {titulo: Gasolina, icone: mdi:gas-station, cor: '#ffc83c', decimais: 2}
+
+    # ---- luzes (toque liga/desliga, segurar abre detalhes) ----
+    - type: grid
+      view_layout: {grid-area: luz}
+      columns: 2
+      square: false
+      cards:
+        - {type: custom:button-card, template: fx_luz, entity: light.sala_teto, variables: {nome: Sala}}
+        - {type: custom:button-card, template: fx_luz, entity: light.cozinha, variables: {nome: Cozinha}}
+        - {type: custom:button-card, template: fx_luz, entity: switch.cafeteira, variables: {nome: Cafeteira, icone: mdi:coffee-maker}}
+        - {type: custom:button-card, template: fx_luz, entity: light.varanda, variables: {nome: Varanda}}
+
+    # ---- segurança ----
+    - type: grid
+      view_layout: {grid-area: seg}
+      columns: 3
+      square: false
+      cards:
+        - {type: custom:button-card, template: fx_sensor, entity: binary_sensor.porta_entrada, variables: {tipo: porta, nome: Entrada}}
+        - {type: custom:button-card, template: fx_sensor, entity: binary_sensor.janela_sala, variables: {tipo: janela, nome: Janela sala}}
+        - {type: custom:button-card, template: fx_sensor, entity: binary_sensor.movimento_garagem, variables: {tipo: movimento, nome: Garagem}}
+        - type: custom:button-card
+          template: fx_acesso
+          entity: cover.portao
+          variables: {tipo: portao, titulo: Portão}
+          tap_action: {action: toggle}
+
+    # ---- ambientes: um por cômodo, com contador de luzes ----
+    - type: vertical-stack
+      view_layout: {grid-area: amb}
+      cards:
+        - {type: custom:button-card, template: fx_ambiente, variables: {nome: Sala, icone: mdi:sofa, luzes: [light.sala_teto]}, tap_action: {action: navigate, navigation_path: /home/areas-sala}}
+        - {type: custom:button-card, template: fx_ambiente, variables: {nome: Cozinha, icone: mdi:silverware-fork-knife, luzes: [light.cozinha]}}
+        - {type: custom:button-card, template: fx_ambiente, variables: {nome: Varanda, icone: mdi:balcony, luzes: [light.varanda]}}
