@@ -81,6 +81,17 @@ Doug Futurista:
 
   # ---- campos, tabelas e configurações ----
   input-fill-color: "rgba(14, 34, 66, 0.6)"
+  # campos de escolha e listas do HA 2026 (seletor de tema, de entidade...): escuros, sem fundo branco
+  ha-color-form-background: "rgba(14, 34, 66, 0.6)"
+  ha-color-form-background-hover: "rgba(20, 44, 82, 0.7)"
+  ha-color-form-background-disabled: "rgba(14, 34, 66, 0.3)"
+  ha-color-border-neutral-loud: "rgba(160, 200, 255, 0.35)"
+  ha-color-fill-neutral-quiet-resting: "rgba(160, 200, 255, 0.05)"
+  ha-color-fill-neutral-quiet-hover: "rgba(160, 200, 255, 0.10)"
+  ha-color-fill-neutral-quiet-active: "rgba(160, 200, 255, 0.14)"
+  ha-color-fill-neutral-normal-resting: "rgba(160, 200, 255, 0.08)"
+  ha-color-fill-neutral-normal-hover: "rgba(160, 200, 255, 0.14)"
+  ha-color-fill-neutral-normal-active: "rgba(160, 200, 255, 0.18)"
   data-table-background-color: "rgba(8, 18, 40, 0.6)"
   table-row-background-color: "rgba(14, 34, 66, 0.55)"
   table-row-alternative-background-color: "rgba(8, 18, 40, 0.55)"
