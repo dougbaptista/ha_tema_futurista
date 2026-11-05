@@ -5,15 +5,16 @@
 # nos cartões e na barra do topo.
 #
 # Para trocar a cor de destaque (ex.: a cor do seu time), mude os dois valores
-# marcados com "DESTAQUE" abaixo: primary-color e accent-color.
+# marcados com "DESTAQUE" abaixo: primary-color e accent-color. Botões, abas, menu,
+# interruptores, bordas e a grade do fundo seguem essas duas linhas.
 
 Doug Futurista:
   # ---- fundo (só CSS, sem imagem) ----
   lovelace-background: >-
-    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(60, 200, 255, 0.18), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(111, 227, 255, 0.10), transparent 60%),
-    repeating-linear-gradient(0deg, rgba(60, 200, 255, 0.045) 0 1px, transparent 1px 48px),
-    repeating-linear-gradient(90deg, rgba(60, 200, 255, 0.045) 0 1px, transparent 1px 48px),
+    radial-gradient(ellipse 80% 50% at 15% 0%, color-mix(in srgb, var(--primary-color) 18%, transparent), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 100% 100%, color-mix(in srgb, var(--accent-color) 10%, transparent), transparent 60%),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--primary-color) 4%, transparent) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--primary-color) 4%, transparent) 0 1px, transparent 1px 48px),
     linear-gradient(160deg, #071226 0%, #050b18 100%) fixed
   primary-background-color: "#071226"
   secondary-background-color: "#0b1a33"
@@ -32,13 +33,29 @@ Doug Futurista:
   state-active-color: "#ffd23f"
   state-light-active-color: "#ffd23f"
   state-unavailable-color: "#5d6f8f"
-  switch-checked-color: "#3cc8ff"
-  tile-color: "#3cc8ff"
+  switch-checked-color: "var(--primary-color)"
+  tile-color: "var(--primary-color)"
+  # botões e destaques do HA 2026 (paleta própria do HA, ligada aqui ao DESTAQUE)
+  ha-color-fill-primary-loud-resting: "var(--primary-color)"
+  ha-color-fill-primary-loud-hover: "color-mix(in srgb, var(--primary-color) 82%, #ffffff)"
+  ha-color-fill-primary-loud-active: "var(--primary-color)"
+  ha-color-fill-primary-normal-resting: "color-mix(in srgb, var(--primary-color) 22%, transparent)"
+  ha-color-fill-primary-normal-hover: "color-mix(in srgb, var(--primary-color) 32%, transparent)"
+  ha-color-fill-primary-normal-active: "color-mix(in srgb, var(--primary-color) 22%, transparent)"
+  ha-color-fill-primary-quiet-resting: "color-mix(in srgb, var(--primary-color) 10%, transparent)"
+  ha-color-fill-primary-quiet-hover: "color-mix(in srgb, var(--primary-color) 18%, transparent)"
+  ha-color-fill-primary-quiet-active: "color-mix(in srgb, var(--primary-color) 10%, transparent)"
+  ha-color-border-primary-quiet: "color-mix(in srgb, var(--primary-color) 25%, transparent)"
+  ha-color-border-primary-normal: "color-mix(in srgb, var(--primary-color) 55%, transparent)"
+  ha-color-border-primary-loud: "var(--primary-color)"
+  ha-color-on-primary-quiet: "var(--accent-color)"
+  ha-color-on-primary-normal: "var(--accent-color)"
+  ha-color-on-primary-loud: "#06111f"
 
   # ---- cartões em vidro ----
   card-background-color: "rgba(14, 34, 66, 0.78)"
   ha-card-background: "linear-gradient(145deg, rgba(14, 34, 66, 0.78), rgba(8, 18, 40, 0.78))"
-  ha-card-border-color: "rgba(60, 200, 255, 0.25)"
+  ha-card-border-color: "color-mix(in srgb, var(--primary-color) 25%, transparent)"
   ha-card-border-width: "1px"
   ha-card-border-radius: "18px"
   ha-card-box-shadow: "0 8px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06)"
@@ -46,8 +63,8 @@ Doug Futurista:
   # ---- barra do topo e diálogos ----
   app-header-background-color: "rgba(7, 18, 38, 0.72)"
   app-header-text-color: "#eaf4ff"
-  app-header-selection-bar-color: "#3cc8ff"
-  app-header-border-bottom: "1px solid rgba(60, 200, 255, 0.25)"
+  app-header-selection-bar-color: "var(--primary-color)"
+  app-header-border-bottom: "1px solid color-mix(in srgb, var(--primary-color) 25%, transparent)"
   mdc-theme-surface: "#0b1a33"
   ha-dialog-surface-background: "#0b1a33"
   ha-color-surface-default: "#0b1a33"
@@ -56,11 +73,11 @@ Doug Futurista:
   sidebar-background-color: "#050d1c"
   sidebar-text-color: "#cfe0f5"
   sidebar-icon-color: "#6fb8ff"
-  sidebar-selected-background-color: "rgba(60, 200, 255, 0.16)"
-  sidebar-selected-icon-color: "#3cc8ff"
+  sidebar-selected-background-color: "color-mix(in srgb, var(--primary-color) 16%, transparent)"
+  sidebar-selected-icon-color: "var(--primary-color)"
   sidebar-selected-text-color: "#ffffff"
   sidebar-menu-button-text-color: "#eaf4ff"
-  sidebar-border-color: "rgba(60, 200, 255, 0.22)"
+  sidebar-border-color: "color-mix(in srgb, var(--primary-color) 22%, transparent)"
 
   # ---- campos, tabelas e configurações ----
   input-fill-color: "rgba(14, 34, 66, 0.6)"
@@ -99,5 +116,5 @@ Doug Futurista:
     .header, app-header, .toolbar {
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 1px 0 rgba(60, 200, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 1px 0 color-mix(in srgb, var(--primary-color) 25%, transparent), 0 8px 24px rgba(0, 0, 0, 0.35);
     }
