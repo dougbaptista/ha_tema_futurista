@@ -6,9 +6,9 @@ menu lateral e barra do topo combinando, e um fundo com grade de circuito feito 
 
 Feito pelo canal **[Doug Smart Home](https://www.youtube.com/@dougsmarthome)**.
 
-![Página de área com o tema Doug Futurista](images/area.png)
+![Página de área com o tema Doug Futurista](https://raw.githubusercontent.com/dougbaptista/ha_tema_futurista/main/images/area.png)
 
-![Configurações com o tema Doug Futurista](images/configuracoes.png)
+![Configurações com o tema Doug Futurista](https://raw.githubusercontent.com/dougbaptista/ha_tema_futurista/main/images/configuracoes.png)
 
 ## Instalação
 
