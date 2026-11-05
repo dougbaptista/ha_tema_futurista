@@ -68,6 +68,25 @@ Doug Futurista:
   table-row-background-color: "rgba(14, 34, 66, 0.55)"
   table-row-alternative-background-color: "rgba(8, 18, 40, 0.55)"
   code-editor-background-color: "#071226"
+  # editor de código (YAML, modelos): cores claras sobre o azul-marinho
+  codemirror-property: "#6fe3ff"
+  codemirror-keyword: "#ff9ad5"
+  codemirror-atom: "#ffcf3a"
+  codemirror-number: "#ffcf3a"
+  codemirror-string: "#a6f3b8"
+  codemirror-string-2: "#a6f3b8"
+  codemirror-variable: "#eaf4ff"
+  codemirror-variable-2: "#9fd8ff"
+  codemirror-variable-3: "#9fd8ff"
+  codemirror-def: "#6fe3ff"
+  codemirror-builtin: "#ffb86b"
+  codemirror-operator: "#cfe3ff"
+  codemirror-comment: "#7f93b3"
+  codemirror-tag: "#ff9ad5"
+  codemirror-meta: "#cfe3ff"
+  codemirror-attribute: "#ffb86b"
+  codemirror-qualifier: "#ffb86b"
+  codemirror-type: "#9fd8ff"
 
   # ---- desfoque de vidro (precisa do card-mod; sem ele, é ignorado) ----
   card-mod-theme: Doug Futurista
