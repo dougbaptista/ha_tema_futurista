@@ -88,7 +88,7 @@ fx_pessoa:
       ]]]
     info: |
       [[[
-        if (!entity) return `<div style="color:#ff9a9a">entidade não encontrada: ${this._config && this._config.entity}</div>`;
+        if (!entity) return `<div style="color:#ff9a9a;font-size:13px;line-height:1.3;white-space:normal">entidade não encontrada<br><b>${(this._config && this._config.entity) || '(sem entity)'}</b></div>`;
         const nome = entity.attributes.friendly_name || '';
         const e = entity.state === 'home' ? 'Em casa' : entity.state === 'not_home' ? 'Fora' : ['unknown', 'unavailable'].includes(entity.state) ? 'Sem localização' : entity.state;
         const cor = entity.state === 'home' ? '#34e08a' : '#9fb0cc';
